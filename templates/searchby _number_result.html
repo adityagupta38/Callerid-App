@@ -1,0 +1,44 @@
+{% extends 'user_home.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %} Searchby Number Result {% endblock %}</title>
+</head>
+<body>
+{% block userhome_body %}
+    <div class="container-fluid mt-5">
+    {% if user %}
+    <h2 class="alert-success text-center">User Is Registered As</h2>
+        <h3 class="{% if user.spam == 'No' %} alert alert-success text-center {% else %} alert alert-danger text-center {% endif %}">
+        Name: {{ user.name }}<br>
+        Phone No: {{ user.phoneno }}<br>
+        Email: {{ user.email }}<br>
+        Spam: {{ user.spam }}
+        </h3>
+    {% endif %}
+    {% if phone_list %}
+         <table class="table table-hover table-responsive table-primary">
+        <thead>
+         <tr><h2 class="alert alert-info text-center">Phone No Details By Number</h2></tr>
+        <tr>
+            <th>Name</th>
+            <th>Phone No</th>
+            <th>Spam</th>
+        </tr>
+        </thead>
+        <tbody>
+       {% for phoneno_obj in phone_list %}
+             <tr>
+                <td>{{ phoneno_obj.name }}</td>
+                <td>{{ phoneno_obj.phoneno }}</td>
+                <td><h3 class="{% if phoneno_obj.spam == 'Yes' %} alert-danger {% else %} alert-success {% endif %} text-center"> {{ phoneno_obj.spam }}</h3></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+         </table>
+    {% endif %}
+    </div>
+{% endblock%}
+</body>
+</html>

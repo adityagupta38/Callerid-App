@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+{% block content_body %}
+    <div class="container-fluid">
+    <h2 class="alert-warning alert alert text-center">Welcome to CallerId</h2><br>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4">
+                <a href="{% url 'search_by_name' %}"><button type="button" class="btn btn-outline-primary w-100">Search by Name</button></a>
+            </div>
+            <div class="col-sm-4">
+                <a href="{% url 'search_by_number' %}"><button type="button" class="btn btn-outline-primary w-100">Search by Number</button></a>
+            </div>
+            <div class="col-sm-4">
+                <a href="{% url 'add_update_spam' %}"><button type="button" class="btn btn-outline-primary w-100">Add Spam Numbers</button></a>
+            </div>
+        </div>
+    </div>
+    <div class="row-cols-sm-8">
+    {% block userhome_body %}
+        {% endblock %}
+    </div>
+    </div>
+{% endblock %}
+</body>
+</html>

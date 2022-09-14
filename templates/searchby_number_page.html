@@ -1,0 +1,24 @@
+{% extends 'user_home.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %} Search By Number Page {% endblock %}</title>
+</head>
+<body>
+{% block userhome_body %}
+      <div class="container text-center w-50 mt-5 pt-5">
+<h2 class="alert alert-info" style="font-family: Lucida">Search By Number</h2>
+    {% load widget_tweaks %}
+<form method="post">
+    {% csrf_token %}
+        {% if error %}
+                <h3 class="alert-danger text-center">{{ error }}</h3>
+        {% endif %}<br>
+    {% render_field form.phoneno class="form-control mt-2" placeholder="Enter Number"%}<br>
+    <input type="submit" value="Search" class="btn btn-primary w-25" style="min-width: 60%">
+</form>
+</div>
+ {% endblock %}
+</body>
+</html>

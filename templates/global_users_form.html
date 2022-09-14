@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block  title %} Global Users  {% endblock %}</title>
+</head>
+<body>
+{% block content_body %}
+    <div class="container text-center w-50 mt-5 pt-5">
+<h2 class="alert alert-info" style="font-family: Lucida">Global Users Database</h2>
+    {% load widget_tweaks %}
+<form method="post">
+    {% csrf_token %}
+
+<!-- error section for form errors -->
+    {% if errors %}
+        {% for err, error in errors.items %}
+            <h3 class="alert-danger text-center">{{ err }}: {{ error }}</h3><br>
+         {% endfor %}
+    {% endif %}
+
+<!--error msg if user is already exist-->
+{% if msg %}
+    <h3 class="alert-success text-center">{{ msg }}</h3><br>
+ {% endif %}
+
+<!-- form fields -->
+
+    {% render_field form.phoneno class="form-control mt-2" placeholder="Mobile No" %}
+    {% render_field form.name class="form-control mt-2" placeholder="Name"%}<br>
+    <input type="submit" value="Add" class="btn btn-success w-25" style="min-width: 60%">
+
+</form>
+</div>
+{% endblock %}
+</body>
+</html>
