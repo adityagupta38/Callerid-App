@@ -34,4 +34,5 @@ urlpatterns = [
     path('searchbyname', views.search_by_name, name='search_by_name'),
     path('searchbynumber', views.search_by_number, name='search_by_number'),
     path('addspam', views.add_update_spam, name='add_update_spam'),
+    path('userlogout', views.user_logout, name='user_logout'),
 ]

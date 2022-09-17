@@ -1,9 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse
 from .forms import UserForm, UserLoginForm, GlobalUsersForm, SearchByNameForm, SearchByNumberForm
 from django.contrib import messages
 from .utils import is_user_authenticated, phoneno_registered
 from .models import GlobalUsers, User
 from django.db.models import Q
+
 # Create your views here.
 
 
@@ -11,12 +12,12 @@ def user_login(request):
     if request.method == 'POST':
         phoneno = request.POST.get('phoneno')
         password = request.POST.get('password')
-        userform = UserLoginForm()
+        userform = UserLoginForm(request.POST)
         if not phoneno_registered(phoneno):
             error = 'Phoneno is Not Registerd Pls Register First'
             return render(request, 'user_login.html', {'form': userform, 'error': error})
         if is_user_authenticated(phoneno, password):
-           return redirect('/userhome')
+            return redirect('/userhome')
         error = 'Invalid Password Pls Enter Correct Password'
         return render(request, 'user_login.html', {'form': userform, 'error': error})
     userloginform = UserLoginForm()
@@ -74,7 +75,7 @@ def search_by_name(request):
 
 def search_by_number(request):
     if request.method == 'POST':
-        phoneno = int(request.POST.get('phoneno'))
+        phoneno = request.POST.get('phoneno')
         if phoneno_registered(phoneno):
             user = User.objects.get(phoneno=phoneno)
             return render(request, 'searchby _number_result.html', {'user': user})
@@ -90,7 +91,7 @@ def search_by_number(request):
 
 def add_update_spam(request):
     if request.method == 'POST':
-        phoneno = int(request.POST.get('phoneno'))
+        phoneno = request.POST.get('phoneno')
         spam = request.POST.get('spam')
         if phoneno_registered(phoneno):
             user = User.objects.get(phoneno=phoneno)
@@ -110,3 +111,7 @@ def add_update_spam(request):
         globaluser.save()
         return render(request, 'add_spam_no.html', {'msg': f'{phoneno} Added To Spam'})
     return render(request, 'add_spam_no.html')
+
+
+def user_logout(request):
+    return redirect('/')
