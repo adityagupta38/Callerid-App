@@ -7,27 +7,28 @@ from .models import GlobalUsers
 class GlobalUsersApi(viewsets.ViewSet):
     def list(self, request):
         if 'phoneno' in request.data:
-            phoneno = request.data.get('phoneno', '')
+            phoneno = request.data.get('user', '')
             if phoneno is not '':
+                phoneno = request.data.get('phoneno')
                 exist = GlobalUsers.objects.filter(phoneno=phoneno)
                 if exist:
                     serializer = GlobalUsersSerializer(exist, many=True)
                     return Response(serializer.data)
                 return Response({'msg': "Sorry We Didn't Have An Update For This Number"})
-            return Response({'msg': 'Invalid Phone No pls enter correct number'})
-        return Response({'msg': 'phoneno is not provided in request body'})
+            return Response({'msg': 'Invalid user Phone No pls enter correct number'})
+        return Response({'msg': 'Registered user phoneno is not provided in request body'})
 
     def create(self, request):
-        if 'phoneno' in request.data:
-            phoneno = request.data.get('phoneno', '')
-            if phoneno is not '':
+        if 'user' in request.data:
+            user = request.data.get('user', '')
+            if user is not '':
                 serializer = GlobalUsersSerializer(data=request.data)
                 if serializer.is_valid():
                     serializer.save()
                     return Response(serializer.data)
                 return Response(serializer.errors)
-            return Response({'msg': 'Invalid Phone No pls enter correct number'})
-        return Response({'msg': 'phoneno is not provided in request body'})
+            return Response({'msg': 'Invalid user Phone No pls enter correct number'})
+        return Response({'msg': 'Registered user phoneno is not provided in request body'})
 
     def retrieve(self, request, pk=None):
         if 'phoneno' in request.data:

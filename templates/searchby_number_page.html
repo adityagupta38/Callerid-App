@@ -12,11 +12,23 @@
     {% load widget_tweaks %}
 <form method="post">
     {% csrf_token %}
+
+<!-- form errors -->
+{% if errors %}
+    {% for error in errors.values %}
+        <h3 class="alert-danger"> {{ error }}</h3>
+    {% endfor %}
+{% endif %}
+
+<!--  errors -->
         {% if error %}
                 <h3 class="alert-danger text-center">{{ error }}</h3>
         {% endif %}<br>
+
+<!-- form fields -->
     {% render_field form.phoneno class="form-control mt-2" placeholder="Enter Number"%}<br>
     <input type="submit" value="Search" class="btn btn-primary w-25" style="min-width: 60%">
+
 </form>
 </div>
  {% endblock %}

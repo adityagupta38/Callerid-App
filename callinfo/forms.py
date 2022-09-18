@@ -10,6 +10,7 @@ class UserLoginForm(forms.Form):
 
 
 class UserForm(forms.ModelForm):
+    pasword = forms.CharField(min_length=8, max_length=50)
     password2 = forms.CharField(max_length=50)
     phoneno = forms.CharField(max_length=10, min_length=10)
 
@@ -43,4 +44,21 @@ class SearchByNameForm(forms.Form):
 
 
 class SearchByNumberForm(forms.Form):
-    phoneno = forms.IntegerField()
+    phoneno = forms.CharField(max_length=10, min_length=10)
+
+    def clean_phoneno(self):
+        phoneno = self.cleaned_data.get('phoneno')
+        regex = re.compile(r'\d+')
+        if not re.match(regex, phoneno):
+            raise forms.ValidationError('Phoneno Should Contain digits from 0 to 9')
+
+
+class AddSpamForm(forms.Form):
+    phoneno = forms.CharField(max_length=10, min_length=10)
+    spam = forms.CharField(min_length=3, widget=forms.CheckboxInput, required=True)
+
+    def clean_phoneno(self):
+        phoneno = self.cleaned_data.get('phoneno')
+        regex = re.compile(r'\d+')
+        if not re.match(regex, phoneno):
+            raise forms.ValidationError('Phoneno Should Contain digits from 0 to 9')
