@@ -4,27 +4,26 @@ from django import forms
 from .models import User, GlobalUsers
 
 
+def allow_digits(phoneno):
+    regex = re.compile(r'\d+')
+    if not re.match(regex, phoneno):
+        raise forms.ValidationError('Phoneno Should Contain digits from 0 to 9')
+
+
 class UserLoginForm(forms.Form):
-    phoneno = forms.CharField(max_length=10, min_length=10)
+    phoneno = forms.CharField(max_length=10, min_length=10, validators=[allow_digits])
     password = forms.CharField(max_length=50, widget=forms.PasswordInput)
 
 
 class UserForm(forms.ModelForm):
-    pasword = forms.CharField(min_length=8, max_length=50)
-    password2 = forms.CharField(max_length=50)
-    phoneno = forms.CharField(max_length=10, min_length=10)
+    password = forms.CharField(min_length=8, max_length=50)
+    password2 = forms.CharField(min_length=8,max_length=50)
+    phoneno = forms.CharField(max_length=10, min_length=10, validators=[allow_digits])
 
     class Meta:
         model = User
         fields = '__all__'
 
-    def clean_phoneno(self):
-        phoneno = self.cleaned_data.get('phoneno')
-        regex = re.compile(r'\d+')
-        if re.match(regex, phoneno):
-            return phoneno
-        else:
-            raise forms.ValidationError('Phoneno Should Contain digits from 0 to 9')
 
     def clean(self):
         p1 = self.cleaned_data.get('password')
@@ -44,21 +43,10 @@ class SearchByNameForm(forms.Form):
 
 
 class SearchByNumberForm(forms.Form):
-    phoneno = forms.CharField(max_length=10, min_length=10)
-
-    def clean_phoneno(self):
-        phoneno = self.cleaned_data.get('phoneno')
-        regex = re.compile(r'\d+')
-        if not re.match(regex, phoneno):
-            raise forms.ValidationError('Phoneno Should Contain digits from 0 to 9')
+    phoneno = forms.CharField(max_length=10, min_length=10, validators=[allow_digits])
 
 
 class AddSpamForm(forms.Form):
     phoneno = forms.CharField(max_length=10, min_length=10)
-    spam = forms.CharField(min_length=3, widget=forms.CheckboxInput, required=True)
+    spam = forms.CharField(min_length=3, widget=forms.CheckboxInput, required=True, validators=[allow_digits])
 
-    def clean_phoneno(self):
-        phoneno = self.cleaned_data.get('phoneno')
-        regex = re.compile(r'\d+')
-        if not re.match(regex, phoneno):
-            raise forms.ValidationError('Phoneno Should Contain digits from 0 to 9')
