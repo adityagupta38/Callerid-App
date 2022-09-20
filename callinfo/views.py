@@ -17,6 +17,7 @@ def user_login(request):
             error = 'Phoneno is Not Registerd Pls Register First'
             return render(request, 'user_login.html', {'form': userform, 'error': error})
         if is_user_authenticated(phoneno, password):
+            request.session['uname'] = phoneno
             return redirect('/userhome')
         error = 'Invalid Password Pls Enter Correct Password'
         return render(request, 'user_login.html', {'form': userform, 'error': error})
@@ -43,7 +44,9 @@ def user_registeration(request):
 
 
 def user_home(request):
-    return render(request, 'user_home.html')
+    if 'uname' in request.session:
+        return render(request, 'user_home.html')
+    return redirect('/')
 
 
 def global_user(request):
@@ -61,65 +64,73 @@ def global_user(request):
 
 
 def search_by_name(request):
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        exist = GlobalUsers.objects.filter(Q(name__startswith=name) | Q(name__contains=name)).order_by('name')
-        if exist:
-            return render(request, 'searcby_name_result.html', {'phone_list': exist})
+    if 'uname' in request.session:
+        if request.method == 'POST':
+            name = request.POST.get('name')
+            exist = GlobalUsers.objects.filter(Q(name__startswith=name) | Q(name__contains=name)).order_by('name')
+            if exist:
+                return render(request, 'searcby_name_result.html', {'phone_list': exist})
+            nameform = SearchByNameForm()
+            error = "Sorry We Didn't Have An Update For This Name"
+            return render(request, 'searchby_name_page.html', {'form': nameform, 'error': error})
         nameform = SearchByNameForm()
-        error = "Sorry We Didn't Have An Update For This Name"
-        return render(request, 'searchby_name_page.html', {'form': nameform, 'error': error})
-    nameform = SearchByNameForm()
-    return render(request, 'searchby_name_page.html', {'form': nameform})
+        return render(request, 'searchby_name_page.html', {'form': nameform})
+    return redirect('/')
 
 
 def search_by_number(request):
-    if request.method == 'POST':
-        numform = SearchByNumberForm(request.POST)
-        if numform.is_valid():
-            phoneno = request.POST.get('phoneno')
-            if phoneno_registered(phoneno):
-                user = User.objects.get(phoneno=phoneno)
-                return render(request, 'searchby _number_result.html', {'user': user})
-            exist = GlobalUsers.objects.filter(phoneno=phoneno)
-            if exist:
-                return render(request, 'searchby _number_result.html', {'phone_list': exist, 'user': None})
-            error = "Sorry We Didn't Have An Update For This Number"
-            return render(request, 'searchby_number_page.html', {'form': numform, 'error': error})
-        error = numform.errors
-        return render(request, 'searchby_number_page.html', {'form': numform, 'errors': error})
-    numform = SearchByNumberForm()
-    return render(request, 'searchby_number_page.html', {'form': numform})
+    if 'uname' in request.session:
+        if request.method == 'POST':
+            numform = SearchByNumberForm(request.POST)
+            if numform.is_valid():
+                phoneno = request.POST.get('phoneno')
+                if phoneno_registered(phoneno):
+                    user = User.objects.get(phoneno=phoneno)
+                    return render(request, 'searchby _number_result.html', {'user': user})
+                exist = GlobalUsers.objects.filter(phoneno=phoneno)
+                if exist:
+                    return render(request, 'searchby _number_result.html', {'phone_list': exist, 'user': None})
+                error = "Sorry We Didn't Have An Update For This Number"
+                return render(request, 'searchby_number_page.html', {'form': numform, 'error': error})
+            error = numform.errors
+            return render(request, 'searchby_number_page.html', {'form': numform, 'errors': error})
+        numform = SearchByNumberForm()
+        return render(request, 'searchby_number_page.html', {'form': numform})
+    return redirect('/')
 
 
 def add_update_spam(request):
-    if request.method == 'POST':
-        spamform = AddSpamForm(request.POST)
-        if spamform.is_valid():
-            phoneno = request.POST.get('phoneno')
-            spam = request.POST.get('spam')
-            if phoneno_registered(phoneno):
-                user = User.objects.get(phoneno=phoneno)
-                user.spam = spam
-                user.save()
+    if 'uname' in request.session:
+        if request.method == 'POST':
+            spamform = AddSpamForm(request.POST)
+            if spamform.is_valid():
+                phoneno = request.POST.get('phoneno')
+                spam = request.POST.get('spam')
+                if phoneno_registered(phoneno):
+                    user = User.objects.get(phoneno=phoneno)
+                    user.spam = spam
+                    user.save()
+                    exist = GlobalUsers.objects.filter(phoneno=phoneno)
+                    if exist:
+                        exist.update(spam=spam)
+                    else:
+                        globaluser = GlobalUsers(name='', phoneno=phoneno, spam=spam)
+                        globaluser.save()
+                    return render(request, 'add_spam_no.html', {'msg': f'{phoneno} Added To Spam'})
                 exist = GlobalUsers.objects.filter(phoneno=phoneno)
                 if exist:
                     exist.update(spam=spam)
-                else:
-                    globaluser = GlobalUsers(name='', phoneno=phoneno, spam=spam)
-                    globaluser.save()
+                    return render(request, 'add_spam_no.html', {'msg': f'{phoneno} Added To Spam'})
+                globaluser = GlobalUsers(name='', phoneno=phoneno, spam=spam)
+                globaluser.save()
                 return render(request, 'add_spam_no.html', {'msg': f'{phoneno} Added To Spam'})
-            exist = GlobalUsers.objects.filter(phoneno=phoneno)
-            if exist:
-                exist.update(spam=spam)
-                return render(request, 'add_spam_no.html', {'msg': f'{phoneno} Added To Spam'})
-            globaluser = GlobalUsers(name='', phoneno=phoneno, spam=spam)
-            globaluser.save()
-            return render(request, 'add_spam_no.html', {'msg': f'{phoneno} Added To Spam'})
-        return render(request, 'add_spam_no.html', {'form': spamform, 'errors': spamform.errors})
-    spamform = AddSpamForm()
-    return render(request, 'add_spam_no.html', {'form': spamform})
+            return render(request, 'add_spam_no.html', {'form': spamform, 'errors': spamform.errors})
+        spamform = AddSpamForm()
+        return render(request, 'add_spam_no.html', {'form': spamform})
+    return redirect('/')
 
 
 def user_logout(request):
+    if 'uname' in request.session:
+        del request.session['uname']
     return redirect('/')
