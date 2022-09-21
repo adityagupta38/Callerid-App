@@ -1,3 +1,5 @@
+Project Details
+
 After login user can redirected to homepage where he can peform all the required tasks. 
 
 1. There are two models User is for registered user info & GlobalUsers is for both registered and non registered.
@@ -6,17 +8,23 @@ After login user can redirected to homepage where he can peform all the required
 
 3. Both the Models have Spam field set to Default value No and registered user can add or update the spam value from UI and it will get reflected on both the  models.
 
-4. only get and post requests are allowed for Api.
+How Api Can Be Used
 
-5. BASE_URL for api will be the localhost or ip address of the local machine for developments server.
+1. only get and post requests are allowed for Api.
 
-6.ENDPOINT is 'guserapi/' for fetching the details from api you need to send valid credentials as request body.
+2. BASE_URL for api will be the localhost or ip address of the local machine for developments server.
 
-7. phoneno is the key for api and Mobile No will be the value.
+3.ENDPOINT is 'guserapi/' for fetching the details from api you need to send valid credentials as request body.
 
-8.  don't forget to append / at the end of api Url bcz append slash in django is still set as it will give an error.
+4. for getting detail of phoneno just use phoneno  as key & the Mob no as Value of phoneno for fetching the detail of that particular phoneno using GET request.
 
-9. views for api's are in seprate module named apiviews.
+5. For adding a no to Spam you need to first verify credentials of registered user as user(as key) and registered mobile no as value and password(as key) and registered user password as value and then rest of the data using specified key and Values.
 
-10. please make sure to run python manage.py makemigrations and migrate commands respectively before try to run the server.
+6.  don't forget to append / at the end of api Url bcz append slash in django is still set as it will give an error.
+
+7. views for api's are in seprate module named apiviews.
+
+
+
+Note: please make sure to run python manage.py makemigrations and migrate commands respectively before try to run the server.
 
